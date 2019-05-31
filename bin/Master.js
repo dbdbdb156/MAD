@@ -30,6 +30,28 @@ var config = require('../config'),
     globalServerInfo,
     separator = '\n\n\t';
 
+
+// Server 통신부 
+var net = require('net');
+var server = net.createServer(function(client){
+    console.log('Client connected');
+    client.on('data', function(data){
+        console.log('Client sent ' + data.toString());
+    });
+    client.on('end',function(){
+        console.log('Client disconnected');
+	clUtils.prompt();
+    }
+    );
+    client.write('Hello');
+});
+server.listen(8107, function(){
+    console.log('\nTCP Server listening for connections');
+    clUtils.prompt();
+});
+
+
+
 function handleResult(message) {
     return function(error) {
         if (error) {
