@@ -141,11 +141,11 @@ function connect(command) {
 
 	var keyList = Object.keys(deviceInfo),
         result = [];
-
+/*
     for (var i=0; i < keyList.length; i++) {
         console.log(deviceInfo[keyList[i]]);
     }
-
+*/
 	
         if (error) {
             clUtils.handleError(error);
@@ -297,7 +297,7 @@ function straight() {
             globalDeviceInfo = deviceInfo;
             setHandlers(deviceInfo);
             console.log('\nConnected:\n--------------------------------\nDevice location: %s', deviceInfo.location);
-		console.log( deviceInfo);
+		//console.log( deviceInfo);
               clUtils.prompt();
         }
     });
@@ -310,7 +310,7 @@ function straight() {
             obj_list =objList;
         }
     });
-  	console.log(obj_list);
+  	//console.log(obj_list);
 
 	clUtils.prompt();
 }

@@ -13,12 +13,15 @@ var opts = {
   host: process.argv[2],
   port: process.argv[3],
   //method: 'POST',
-  path: '/'
+  path: 'http://'+process.argv[2]+':' + process.argv[3]
 };
+
+var firsturl = opts.path;
 
 // Cmdline 입력 
 r.on('line',function(line){
 	var sp = line.split(' ');
+	console.log(sp);
 	if(line=='exit'){
 		r.close();
 	}
@@ -29,8 +32,10 @@ r.on('line',function(line){
 	}
 	else if(sp[0] == 'GET'){
 		console.log(sp[0]);
+		console.log(opts.path);
 		opts.method=sp[0];
-		opts.path = opts.path + sp[1];
+		opts.path = firsturl + sp[1];
+		console.log(opts.path);
 		GetReqToHttpserver(sp);
 	}
 	r.prompt();
@@ -73,8 +78,8 @@ function GetReqToHttpserver(cmdline){
 	console.log(cmdline);
 
 	var req = http.request(opts, function (res) {
-
-  	  var returnData = '';
+	
+  	var returnData = '';
 
    	 // When server return any data.
     	res.on('data', function (data) {
@@ -86,11 +91,11 @@ function GetReqToHttpserver(cmdline){
     	    console.log(returnData);
 	    r.prompt();
    	 })
-
+	
 	});
-
-// Finish sending the request. Then serve will process this request.
 	req.end();
+// Finish sending the request. Then serve will process this request.
+	//req.end();
 }
 
 console.log('We recommand This method: [http_method send_data]');

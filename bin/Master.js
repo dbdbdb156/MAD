@@ -29,26 +29,71 @@ var config = require('../config'),
     clUtils = require('command-node'),
     globalServerInfo,
     separator = '\n\n\t';
+/////////////////////////////////////////////////////////////////////// HTTP server /////////
+const http = require('http');
+var url = require('url');
+const { parse } = require('querystring');
 
+var port = 3000;
+var hostname = '192.168.123.178';
 
-// Server 통신부 
-var net = require('net');
-var server = net.createServer(function(client){
-    console.log('Client connected');
-    client.on('data', function(data){
-        console.log('Client sent ' + data.toString());
-    });
-    client.on('end',function(){
-        console.log('Client disconnected');
-	clUtils.prompt();
+const server = http.createServer((req, res) => {
+
+   console.log(res.statusCode);
+   res.writeHead(200, {"Content-Type": "text/html; charset=utf-8"});
+   console.log(req.method);
+   console.log(res.headers);
+
+   // POST 는 통상적으로 Server 의 자원을 수정할때 사용 (ex 게시판)
+   if (req.method === 'POST') {
+        let body = '';
+    	req.on('data', chunk => {
+    	    body += chunk.toString(); // convert Buffer to string
+    	});
+    	req.on('end', () => {
+	   console.log(body);
+     	   console.log(parse(body));
+     	   res.end('ok receive GET request : \n' +body);
+   	});
     }
-    );
-    client.write('Hello');
+    // GET 은 통상적으로 server 에 요청할때 사용 
+    else if(req.method === 'GET'){ 
+	
+	// Parameter 의 값을 받아줍니다.
+    //var reqUrlString = req.url;
+    //var urlObject = url.parse(reqUrlString, true, false);
+	//console.log(reqUrlString);
+	//console.log(urlObject);
+    //var parameter = reqUrlString.split('?');
+	//console.log(parameter);
+
+  //  var afterlinevalue = urlObject.pathname;
+	//console.log(afterlinevalue);
+	//afterlinevalue = afterlinevalue.substr(1);
+	
+	//var parameter = parameter[1];
+
+       // console.log(afterlinevalue);
+	//console.log('HTTP server receive parameter: '+ afterlinevalue);
+    	//res.write('We receive GET value : '+afterlinevalue);
+res.write("hello");
+	res.end();
+    }
+    // 
+    else{
+	console.log(req.method);
+
+    }
 });
-server.listen(8107, function(){
-    console.log('\nTCP Server listening for connections');
-    clUtils.prompt();
+
+server.listen(port,hostname);
+console.log('hostname : '+hostname + '\nport : '+port);
+
+server.addListener('connection', function(socket){  
+    console.log('connected...');
 });
+
+
 
 
 
@@ -146,42 +191,47 @@ function execute(commands) {
 		return function() {
 
 		var receive_to_command = listofvalue.split('/');
-		
-/* test command value
-      		for ( var i in listofvalue ) {
-        		console.log( i + receive_to_command[i]);
-     	 	}
-*/
+
 
 		if(receive_to_command[0] == 'read'){
 
 		lwm2mServer.read(receive_to_command[1], receive_to_command[2],receive_to_command[3],receive_to_command[4], function (error, result) {
-         	if (error) {
-            		clUtils.handleError(error);
-          	} else {
-			console.log('\nResource read:\n----------------------------\n');
-			var readceived_OID = '/' + receive_to_command[2] + '/' + receive_to_command[3];
-			console.log('Id: %s', readceived_OID +'/' +receive_to_command[4]);
-			console.log('Value: %s', result);
+         		if (error) {
+				if(count == 5){
+					clearInterval(myTimer);           
+					clUtils.handleError(error);
+									
+				}
+				else{
+					count = count + 1;
+					console.log(count);
+				}
+          		} else {
+				console.log('\nResource read:\n----------------------------\n');
+				var readceived_OID = '/' + receive_to_command[2] + '/' + receive_to_command[3];
+				console.log('Id: %s', readceived_OID +'/' +receive_to_command[4]);
+				console.log('Value: %s', result);
 
-			clearInterval(myTimer);
-			clUtils.prompt();
-		}}); //lwm2mserver.read end
+				clearInterval(myTimer);
+				clUtils.prompt();
+			}}); //lwm2mserver.read end
 	
-		}
-		else{
-			clearInterval(myTimer);
-			clUtils.prompt();
-		}
-			
+			}
+			else{
+				clearInterval(myTimer);
+				clUtils.prompt();
+			}	
 		}; //return function end
 
 		
 
 	}
 
+		console.log(commands)
+
+		var count = 0;
 		var obj = parseResourceId(commands[1], false);
-		var myTimer = setInterval(synchronize(commands[2]), 500);
+		var myTimer = setInterval(synchronize(commands[2]), 200);
     		if (obj) {
         		lwm2mServer.execute(
           		  commands[0],
@@ -274,12 +324,6 @@ function discoverType(commands) {
 
 function read(commands) {
     var obj = parseResourceId(commands[1], false);
-/*
- var receive_to_command = commands.split('/');
-      for ( var i in value ) {
-        console.log( i + commands[i]);
-      }
-*/
 	console.log(commands);
 
     if (obj) {

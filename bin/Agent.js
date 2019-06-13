@@ -387,36 +387,6 @@ function handleWrite(objectType, objectId, resourceId, value, callback) {
     console.log('-> ResourceId: %s', resourceId);
     console.log('-> Written value: %s', value);
 
-/*
-      var receive_to_command = value.split('/');
-      for ( var i in value ) {
-        console.log( i + receive_to_command[i]);
-      }
-
-	// 커스터마이징 write AgenttoDevice;
-
-        lwm2mServer.read(receive_to_command[1], receive_to_command[2],receive_to_command[3],receive_to_command[4], function (error, result) {
-            if (error) {
-                clUtils.handleError(error);
-            } else {
-                console.log('\nResource read:\n----------------------------\n');
-		var id = '/' + receive_to_command[2] + '/' + receive_to_command[3] +'/' +receive_to_command[4];
-                console.log('Id: %s', id);
-                console.log('Value: %s', result);
-                clUtils.prompt();
-            }
-        });
-
-	lwm2mServer.write(
-            receive_to_command[1],
-            receive_to_command[2],
-            receive_to_command[3],
-            receive_to_command[4],
-            receive_to_command[5],
-            handleResult('Value written successfully'));
-*/
-
-
     clUtils.prompt();
 
     callback(null);
@@ -432,13 +402,7 @@ function handleExecute(objectType, objectId, resourceId, value, callback) {
 	/* Read Command */
 	// 0 : read/write/execute , 1 : device_number , 2: objectType, 3: objectID ,4 : resourceID , command 
 
-
 	var receive_to_command = value.split('/');
-/* test command value
-      		for ( var i in listofvalue ) {
-        		console.log( i + receive_to_command[i]);
-     	 	}
-*/
 	if(receive_to_command[0] == 'read'){
 
 	lwm2mServer.read(receive_to_command[1], receive_to_command[2],receive_to_command[3],receive_to_command[4], function (error, result) {
@@ -475,34 +439,6 @@ function handleExecute(objectType, objectId, resourceId, value, callback) {
 }
 
 function handleRead(objectType, objectId, resourceId, value, callback) {
-
-/*
-lwm2mServer.listDevices(function (error, deviceList) {
-        if (error) {
-            clUtils.handleError(error);
-        } else {
-	    console.log('-> Device Id "%s"', deviceList[0].id);
-            console.log('\n%s\n', JSON.stringify(deviceList[0], null, 4));
-            NowDevice = deviceList[0].id;
-		console.log(NowDevice);
-        }
-    });
-
-    lwm2mServer.read(NowDevice, objectType, objectId, resourceId, function (error, result) {
-            if (error) {
-                clUtils.handleError(error);
-            } else {
-                console.log('\nResource read:\n----------------------------\n');
-                console.log('Id: %s', commands[1]);
-                console.log('Value: %s', result);
-                
-		clUtils.prompt();
-            }
-        });
-
-*/
-
-
 
     console.log('\nValue read:\n--------------------------------\n');
     console.log('-> ObjectType: %s', objectType);
@@ -713,17 +649,6 @@ function straight() {
 
 	lwm2mClient.registry.create('/10000/1', handleObjectFunction);
 	lwm2mClient.registry.setResource('/10000/1', '1', '1', handleObjectFunction);
-	lwm2mClient.register('localhost', '5684', '/', 'list_set', function (error, deviceInfo) {
-        if (error) {
-            clUtils.handleError(error);
-        } else {
-            globalDeviceInfo = deviceInfo;
-            setHandlers(deviceInfo);
-            console.log('\nConnected:\n--------------------------------\nDevice location: %s', deviceInfo.location);
-		console.log( deviceInfo);
-              clUtils.prompt();
-        }
-    });
 
 	var obj_list;
 	lwm2mClient.registry.list(function(error, objList) {
