@@ -29,73 +29,15 @@ var config = require('../config'),
     clUtils = require('command-node'),
     globalServerInfo,
     separator = '\n\n\t';
+
+var RESULT = '';
 /////////////////////////////////////////////////////////////////////// HTTP server /////////
 const http = require('http');
 var url = require('url');
 const { parse } = require('querystring');
 
-var port = 3000;
-var hostname = '192.168.0.97';
-
-const server = http.createServer((req, res) => {
-
-   console.log(res.statusCode);
-   res.writeHead(200, {"Content-Type": "text/html; charset=utf-8"});
-   console.log(req.method);
-   console.log(res.headers);
-
-   // POST 는 통상적으로 Server 의 자원을 수정할때 사용 (ex 게시판)
-   if (req.method === 'POST') {
-        let body = '';
-    	req.on('data', chunk => {
-    	    body += chunk.toString(); // convert Buffer to string
-    	});
-    	req.on('end', () => {
-	   console.log(body);
-     	   console.log(parse(body));
-     	   res.end('ok receive GET request : \n' +body);
-   	});
-    }
-    // GET 은 통상적으로 server 에 요청할때 사용 
-    else if(req.method === 'GET'){ 
-	
-	// Parameter 의 값을 받아줍니다.
-    //var reqUrlString = req.url;
-    //var urlObject = url.parse(reqUrlString, true, false);
-	//console.log(reqUrlString);
-	//console.log(urlObject);
-    //var parameter = reqUrlString.split('?');
-	//console.log(parameter);
-
-  //  var afterlinevalue = urlObject.pathname;
-	//console.log(afterlinevalue);
-	//afterlinevalue = afterlinevalue.substr(1);
-	
-	//var parameter = parameter[1];
-
-       // console.log(afterlinevalue);
-	//console.log('HTTP server receive parameter: '+ afterlinevalue);
-    	//res.write('We receive GET value : '+afterlinevalue);
-res.write("hello");
-	res.end();
-    }
-    // 
-    else{
-	console.log(req.method);
-
-    }
-});
-
-server.listen(port,hostname);
-console.log('hostname : '+hostname + '\nport : '+port);
-
-server.addListener('connection', function(socket){  
-    console.log('connected...');
-});
-
-
-
-
+//var port = 3000;
+//var hostname = '192.168.0.97';
 
 function handleResult(message) {
     return function(error) {
@@ -211,9 +153,15 @@ function execute(commands) {
 				var readceived_OID = '/' + receive_to_command[2] + '/' + receive_to_command[3];
 				console.log('Id: %s', readceived_OID +'/' +receive_to_command[4]);
 				console.log('Value: %s', result);
-
-				clearInterval(myTimer);
 				clUtils.prompt();
+				RESULT = result;
+				clearInterval(myTimer);
+				
+				;
+				
+
+
+
 			}}); //lwm2mserver.read end
 	
 			}
@@ -503,3 +451,77 @@ var commands = {
 };
 
 clUtils.initialize(commands, 'LWM2M-Server> ');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var express = require('express');
+var app = express();
+
+
+app.get('/Camera/On', function (req, res) {
+    console.log("CameraOn");
+
+	execute(['1','/10000/1/1','read/1/3000/1/1']);
+    
+    
+
+
+});
+
+app.get('/Camera/Off', function (req, res) {
+    console.log("CameraOff");
+    //console.log(res.url);
+    execute(['1','/10000/1/1','read/1/3000/1/2']);
+});
+
+app.get('/Music/On', function (req, res) {
+    console.log("MusicOn");
+    //console.log(res.url);
+	execute(['1','/10000/1/1','read/1/3000/2/4']);
+});
+
+app.get('/Music/Off', function (req, res) {
+    console.log("MusicOff");
+    //console.log(res.url);
+	execute(['1','/10000/1/1','read/1/3000/2/5']);
+});
+
+app.get('/Sensor/On', function (req, res) {
+    console.log("SensorOn");
+    //console.log(res.url);
+	execute(['1','/10000/1/1','read/1/3000/3/7']);
+
+	res.send(RESULT);
+});
+
+
+ 
+app.listen(6000,'192.168.0.99');
+
+
+
+
+
+
+
+
+
+
+
+

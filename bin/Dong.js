@@ -136,58 +136,82 @@ function handleRead(objectType, objectId, resourceId, value, callback) {
     console.log('-> Read Value: %s', value);
     clUtils.prompt();
 
-	if(resourceId=='2')
+
+	if(resourceId=='1') //camera on
 	{
-		
+	}
+
+	if(resourceId=='2') // camera off
+	{
+	}
+
+	if(resourceId=='3') 
+	{
+	}
+
+	if(resourceId=='4') // music on
+	{
 		var objectUri = '/'+objectType+'/'+objectId;
 
-		var spawn = require('child_process').spawn,
-			py = spawn('python', ['temp.py'])
-			data = 'TEST',
-			dataString='';
-		py.stdout.on('data',function(data){
-			dataString +=data.toString().replace("\n",'');
-			
-			
-			
-		});
-                                 
-
-		py.stdout.on('end', function(){
-			
-	lwm2mClient.registry.setResource(objectUri, resourceId, dataString, handleObjectFunction);
-		});
-		py.stdin.write(JSON.stringify(data));
-		py.stdin.end();
-
-
-	}
+			var spawn = require('child_process').spawn,
+				py = spawn('python', ['music.py'])
+				data = 'test',
+				dataString='';
+			py.stdout.on('data',function(data){
+				dataString +=data.toString().replace("\n",'');
+			});
 
 	
-		if(resourceId=='3')
-	{
+			py.stdout.on('end', function(){
 
-		var objectUri = '/'+objectType+'/'+objectId;
-
-		var spawn = require('child_process').spawn,
-			py = spawn('python', ['dust.py'])
-			data = 'test',
-			dataString='';
-		py.stdout.on('data',function(data){
-			dataString +=data.toString().replace("\n",'');
-		});
-
-
-		py.stdout.on('end', function(){
-
-	lwm2mClient.registry.setResource(objectUri, resourceId, dataString, handleObjectFunction);
-		});
-		py.stdin.write(JSON.stringify(data));
-		py.stdin.end();
-
-
+			lwm2mClient.registry.setResource(objectUri, resourceId, dataString, handleObjectFunction);
+			});
+			py.stdin.write(JSON.stringify(data));
+			py.stdin.end();
 
 	}
+
+	if(resourceId=='5') // music off
+	{
+	}
+
+	if(resourceId=='6')
+	{
+	}
+
+	if(resourceId=='7') //sensor
+	{
+	var objectUri = '/'+objectType+'/'+objectId;
+
+			var spawn = require('child_process').spawn,
+				py = spawn('python', ['sensor.py'])
+				data = 'test',
+				dataString='';
+			py.stdout.on('data',function(data){
+				dataString +=data.toString().replace("\n",'');
+			});
+
+	
+			py.stdout.on('end', function(){
+
+		lwm2mClient.registry.setResource(objectUri, resourceId, dataString, handleObjectFunction);
+			});
+			py.stdin.write(JSON.stringify(data));
+			py.stdin.end();
+	
+	}
+
+	if(resourceId=='8')
+	{
+	}
+
+
+	if(resourceId=='9')
+	{
+	}
+	
+	
+		
 
 
 
