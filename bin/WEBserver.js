@@ -2,11 +2,14 @@ var express = require('express');
 var app = express();
 
 
-app.get('/Carama/On', function (req, res) {
+app.get('/Camera/On', function (req, res) {
+    console.log("CarameOn");
+    console.log(res.url);
     res.send('execute 1 /10000/1/1 read/1/write/');
 });
 
-app.get('/CaramaOff', function (req, res) {
+app.get('/Camera/Off', function (req, res) {
+    console.log("CarameOff");
     res.send('execute 1 /10000/1/1 read/1/write/');
 });
 
@@ -15,4 +18,4 @@ app.get('/SensorOff', function (req, res) {
 });
 
 
-app.listen(3000,'192.168.123.178');
+app.listen(5000,'192.168.0.97');
