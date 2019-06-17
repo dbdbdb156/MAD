@@ -29,6 +29,8 @@ var config = require('../config'),
     async = require('async'),
     globalDeviceInfo,
     separator = '\n\n\t';
+    var line;
+    var obj;
 
 function printObject(result) {
     var resourceIds = Object.keys(result.attributes);
@@ -93,6 +95,21 @@ function handleWrite(objectType, objectId, resourceId, value, callback) {
     console.log('-> ObjectId: %s', objectId);
     console.log('-> ResourceId: %s', resourceId);
     console.log('-> Written value: %s', value);
+    var spawn = require('child_process').spawn;
+    if(value == 'LineOn'){
+        line = spawn('python',['line_detection_webcam.py'])
+    }
+    else if(value == 'ObjOn'){
+        obj = spawn('python',['object_detection_webcam.py'])
+    }
+    
+    else if(value == 'LineOff'){
+        line.kill();
+    }
+    else if(value == 'ObjOff'){
+        obj.kill();
+    }
+    
     clUtils.prompt();
 
     callback(null);
@@ -141,11 +158,11 @@ function connect(command) {
 
 	var keyList = Object.keys(deviceInfo),
         result = [];
-/*
+
     for (var i=0; i < keyList.length; i++) {
         console.log(deviceInfo[keyList[i]]);
     }
-*/
+
 	
         if (error) {
             clUtils.handleError(error);
@@ -297,7 +314,7 @@ function straight() {
             globalDeviceInfo = deviceInfo;
             setHandlers(deviceInfo);
             console.log('\nConnected:\n--------------------------------\nDevice location: %s', deviceInfo.location);
-		//console.log( deviceInfo);
+		console.log( deviceInfo);
               clUtils.prompt();
         }
     });
@@ -310,7 +327,7 @@ function straight() {
             obj_list =objList;
         }
     });
-  	//console.log(obj_list);
+  	console.log(obj_list);
 
 	clUtils.prompt();
 }
